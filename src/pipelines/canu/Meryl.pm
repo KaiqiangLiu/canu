@@ -122,9 +122,9 @@ sub merylGenerateHistogram ($$) {
     my $largest     = 0;
 
     my $maxCount;
-    my @numDistinct;
-    my @fractDistinct;
-    my @fractTotal;
+    my %numDistinct;
+    my %fractDistinct;
+    my %fractTotal;
 
     open(F, "< $path/$name.histogram");
     while (<F>) {
@@ -139,9 +139,9 @@ sub merylGenerateHistogram ($$) {
 
         if ($v[0] =~ m/^\d+$/) {
             $maxCount             = $v[0];  #  maxCount is last count seen; histogram is sorted.
-            $numDistinct[$v[0]]   = $v[1];
-            $fractDistinct[$v[0]] = $v[2];
-            $fractTotal[$v[0]]    = $v[3];
+            $numDistinct{$v[0]}   = $v[1];
+            $fractDistinct{$v[0]} = $v[2];
+            $fractTotal{$v[0]}    = $v[3];
         }
     }
     close(F);
@@ -164,10 +164,10 @@ sub merylGenerateHistogram ($$) {
 
     for (my $ii=0; $ii <= 40; $ii++) {
         for (my $jj=$lo; $jj < $hi; $jj++) {
-            $TD[$ii] += $numDistinct[$jj];                                                   #  Sum the number of distinct mers we've seen
+            $TD[$ii] += $numDistinct{$jj};                                                   #  Sum the number of distinct mers we've seen
 
-            $FU[$ii] = ($fractDistinct[$ii] < $FU[$ii]) ? $FU[$ii] : $fractDistinct[$jj];    #  But the fractions are already cumulative,
-            $FT[$ii] = ($fractTotal[$ii]    < $FT[$ii]) ? $FT[$ii] : $fractTotal[$jj];       #  we just need to skip zeros.
+            $FU[$ii] = ($fractDistinct{$ii} < $FU[$ii]) ? $FU[$ii] : $fractDistinct{$jj};    #  But the fractions are already cumulative,
+            $FT[$ii] = ($fractTotal{$ii}    < $FT[$ii]) ? $FT[$ii] : $fractTotal{$jj};       #  we just need to skip zeros.
         }
 
         if ($ii > 0) {
